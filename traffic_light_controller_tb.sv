@@ -2,13 +2,12 @@
 
 module traffic_light_tb();
 
-    // 1. Sinyal Tanımlamaları
     logic clk;
     logic reset;
     logic TAORB;
     logic [1:0] LA, LB;
 
-    // 2. Modülü Test Düzeneğine Bağla (Device Under Test)
+    // Device Under Test
     traffic_light_controller dut (
         .clk(clk),
         .reset(reset),
@@ -17,25 +16,25 @@ module traffic_light_tb();
         .LB(LB)
     );
 
-    // 3. Saat Sinyali (10ns Periyotlu clk)
+    //  10ns Period clk
     always #5 clk = ~clk;
 
-    // 4. Test Senaryosu
+    // Test Scenario
     initial begin
-        // Başlangıç Ayarları
+        // initial conditions
         clk = 0;
         reset = 1;
-        TAORB = 1; // A sokağı yoğun başlasın
+        TAORB = 1; // Street A is busy
         
-        #20 reset = 0; // 20ns sonra sistemi çalıştır
+        #20 reset = 0; // Start the system after 20 ns
         
-        // DURUM 1: A'da trafik biterse (S0 -> S1 geçişi beklenir)
+        // If traffic ends at A (S0 -> S1)
         #50 TAORB = 0; 
         
-        // DURUM 2: Sarı ışıkta (S1) 5 saat darbesi beklemeyi izle
+        // Waiting for 5 clock pulse at yellow light (S1)
         #100; 
         
-        // DURUM 3: B'de trafik varken A'ya araç gelirse (S2 -> S3 geçişi)
+        // S2 -> S3 
         #50 TAORB = 1;
         
         #200 $stop; // Simülasyonu bitir

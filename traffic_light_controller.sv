@@ -16,14 +16,13 @@ module traffic_light_controller (
     state_t current_state, next_state;
     logic [3:0] timer; // count 5
 
-    // 1. Durum Kaydı ve Timer (Sequential Logic)
+    // State Recording and Timer (Sequential Logic)
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
             current_state <= S0;
             timer <= 0;
         end else begin
             current_state <= next_state;
-            // S1 ve S3'te timer artsın, diğerlerinde sıfırlansın
             if (current_state == S1 || current_state == S3)
                 timer <= timer + 1;
             else
@@ -31,18 +30,18 @@ module traffic_light_controller (
         end
     end
 
-    // 2. Gelecek Durum Belirleme (Combinational Logic)
+    // Next State Determination (Combinational Logic)
     always_comb begin
         case (current_state)
-            S0: next_state = (TAORB == 1'b0) ? S1 : S0; // A boşsa sarıya geç
-            S1: next_state = (timer >= 4) ? S2 : S1;    // 5 periyot bekle sonra B greene
-            S2: next_state = (TAORB == 1'b1) ? S3 : S2; // B boşsa (yani A'da trafik varsa) sarıya geç
-            S3: next_state = (timer >= 4) ? S0 : S3;    // 5 periyot bekle sonra A greene
+            S0: next_state = (TAORB == 1'b0) ? S1 : S0; // If A is empty, switch to yellow
+            S1: next_state = (timer >= 4) ? S2 : S1;    // Wait 5 periods, then B turns green
+            S2: next_state = (TAORB == 1'b1) ? S3 : S2; // If B is empty, switch to yellow
+            S3: next_state = (timer >= 4) ? S0 : S3;    // Wait 5 periods, then A turns green
             default: next_state = S0;
         endcase
     end
 
-    // 3. Çıkış Mantığı (Combinational Logic)
+    // Output Logic (Combinational Logic)
     always_comb begin
         case (current_state)
             S0: {LA, LB} = {2'b10, 2'b00};
