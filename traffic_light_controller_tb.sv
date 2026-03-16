@@ -32,6 +32,7 @@ module traffic_light_tb();
         #50 TAORB = 0; 
         
         // Waiting for 5 clock pulse at yellow light (S1)
+        
         #100; 
         
         // S2 -> S3 
