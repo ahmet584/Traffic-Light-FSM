@@ -37,7 +37,7 @@ module traffic_light_tb();
         // S2 -> S3 
         #50 TAORB = 1;
         
-        #200 $stop; // Simülasyonu bitir
+        #200 $stop; 
     end
 
 endmodule
